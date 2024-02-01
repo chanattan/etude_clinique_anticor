@@ -1,24 +1,24 @@
-CREATE TABLE Acheteur (
+CREATE TABLE IF NOT EXISTS acheteur (
     id_acheteur INT PRIMARY KEY,
     nom VARCHAR(50)
 );
 
-CREATE TABLE Nature (
+CREATE TABLE IF NOT EXISTS nature (
     id_nature INT PRIMARY KEY,
     nature VARCHAR(30)
 );
 
-CREATE TABLE Forme_Prix (
+CREATE TABLE IF NOT EXISTS forme_Prix (
     id_forme INT PRIMARY KEY,
     forme VARCHAR(30)
 );
 
-CREATE TABLE Procedure (
+CREATE TABLE IF NOT EXISTS procedure (
     procedure_id INT PRIMARY KEY,
     procedure_name VARCHAR(40)
 );
 
-CREATE TABLE Transaction (
+CREATE TABLE IF NOT EXISTS transactions (
     id INT PRIMARY KEY,
     objet TEXT,
     id_modif INT,
@@ -34,16 +34,16 @@ CREATE TABLE Transaction (
     montant INT,
     FOREIGN KEY (nature) REFERENCES Nature(id_nature),
     FOREIGN KEY (forme_prix) REFERENCES Forme_Prix(id_forme),
-    FOREIGN KEY (type) REFERENCES Type_transaction(id)
+    FOREIGN KEY (type) REFERENCES Type_transaction(id) -- is there for later
 );
 
-CREATE TABLE Titulaire (
+CREATE TABLE IF NOT EXISTS titulaire (
     id_titulaire INT PRIMARY KEY,
     denomination_sociale VARCHAR(128),
     type_denomination VARCHAR(128)
 );
 
-CREATE TABLE Lieu (
+CREATE TABLE IF NOT EXISTS lieu (
     type_code INT,
     nom VARCHAR(128),
     code_postal INT,
@@ -53,12 +53,13 @@ CREATE TABLE Lieu (
     code_region INT
 );
 
-CREATE TABLE Type_transaction (
-    id INT PRIMARY KEY,
+-- This table will be extended when we will have the llm preprocessing about object, which is in natural language
+CREATE TABLE IF NOT EXISTS type_transaction (
+    id INT PRIMARY KEY
     -- Define your enum values here, e.g., ENUM('value1', 'value2', 'value3')
 );
 
-CREATE TABLE Modification (
+CREATE TABLE IF NOT EXISTS modification (
     id_modification INT PRIMARY KEY,
     montant INT,
     date DATE,
@@ -69,18 +70,4 @@ CREATE TABLE Modification (
     date_modification DATE,
     FOREIGN KEY (type) REFERENCES Type_transaction(id),
     FOREIGN KEY (titulaire) REFERENCES Titulaire(id_titulaire)
-);
-
-CREATE TABLE Quoi (
-    quoi_id INT PRIMARY KEY,
-    tas_les_cramptes BOOLEAN,
-    koube INT,
-    FOREIGN KEY (koube) REFERENCES Feur(feur_id)
-);
-
-CREATE TABLE Feur (
-    ratio INT,
-    apagnan INT,
-    FOREIGN KEY (ratio) REFERENCES Quoi(quoi_id),
-    FOREIGN KEY (apagnan) REFERENCES Feur(feur_id)
 );
