@@ -1,0 +1,60 @@
+## table titulaire 
+titulaire_denominationSociale_1 - OK
+titulaire_id_1 - OK
+titulaire_typeIdentifiant_1 - OK
+titulaire_denominationSociale_2 - OK
+titulaire_id_2 - OK
+titulaire_typeIdentifiant_2 - OK
+titulaire_denominationSociale_3 - OK
+titulaire_id_3 - OK
+titulaire_typeIdentifiant_3 - OK
+### table transactions should contains 3 attributes for the titulaires (id_titulaire_1, ...2, ..3)
+- OK
+
+## table transactions
+id - OK 
+procedure - OK
+nature - OK
+codeCPV - OK
+dureeMois - OK
+montant - OK
+formePrix - OK
+dateNotification - OK
+objet - OK
+acheteur.id - OK
+acheteur.nom - OK
+source - OK
+lieuExecution.code - OK
+lieuExecution.typeCode - OK
+lieuExecution.nom - OK
+datePublicationDonnees - OK
+created_at - OK
+modaliteExecution - OK
+marcheInnovant - OK
+ccag - OK
+offresRecues - OK
+attributionAvance - OK
+typeGroupementOperateurs - OK
+TypePrix - OK
+considerationsSociales - OK
+considerationsEnvironnementales - OK
+sousTraitanceDeclaree - OK
+tauxAvance - OK
+origineUE - OK (what is it ???)
+origineFrance - OK
+updated_at - OK
+booleanModification - OK
+objetModification - OK
+dureeMoisModification - OK
+datePublicationDonneesModification - OK
+montantModification - OK
+dateNotificationModification - OK
+idModification - OK
+technique - OK
+idAccordCadre - OK
+
+
+titulairesModification - json
+
+actesSousTraitance - json
+modificationsActesSousTraitance - json
