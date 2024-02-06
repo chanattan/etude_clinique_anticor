@@ -50,12 +50,22 @@ CREATE TABLE IF NOT EXISTS type_prix (
 CREATE TABLE IF NOT EXISTS considerations_sociales (
     id_considerations_sociales INT PRIMARY KEY,
     considerations_sociales VARCHAR(32) -- could be a tuple, but it seems that we don't have all the possible descriptions possible in the law from the tables
-)
+);
 
 CREATE TABLE IF NOT EXISTS considerations_environnementales (
     id_considerations_env INT PRIMARY KEY,
     considerations_env VARCHAR(32) -- could be a tuple, but it seems that we don't have all the possible descriptions possible in the law from the tables
-)
+);
+
+CREATE TABLE IF NOT EXISTS acte_sous_traitance {
+
+    id_sous_traitant
+
+
+    FOREIGN KEY (id_transaction) REFERENCES transactions(id),
+
+};
+
 
 CREATE TABLE IF NOT EXISTS transactions (
     id INT PRIMARY KEY,
