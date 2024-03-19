@@ -53,7 +53,7 @@ idModification - OK
 technique - OK
 idAccordCadre - OK
 
-titulairesModification - json
+titulairesModification - json - OK
 
-actesSousTraitance - json
-modificationsActesSousTraitance - json
+actesSousTraitance - json - OK
+modificationsActesSousTraitance - json -- USELESS, appears once and doesn't make sense. This database is broken.

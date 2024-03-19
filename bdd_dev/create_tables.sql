@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS titulaire (
-    id_titulaire INT PRIMARY KEY,
+    id_titulaire VARCHAR(20) PRIMARY KEY,
     denomination_sociale VARCHAR(128),
     type_identifiant VARCHAR(128)
 );
@@ -58,12 +58,15 @@ CREATE TABLE IF NOT EXISTS considerations_environnementales (
 );
 
 CREATE TABLE IF NOT EXISTS acte_sous_traitance {
-
-    id_sous_traitant
-
-
+    id_sous_traitant INT PRIMARY KEY,
     FOREIGN KEY (id_transaction) REFERENCES transactions(id),
-
+    duree_mois INT,
+    date_notif DATE,
+    date_publication_donnees DATE,
+    montant FLOAT,
+    variationPrix VARCHAR(15),
+    sous_traitant_id VARCHAR(20),
+    sous_traitant_type_id VARCHAR(128)
 };
 
 
@@ -103,22 +106,9 @@ CREATE TABLE IF NOT EXISTS transactions (
     FOREIGN KEY (id_modif) REFERENCES modification(id_modif),
     technique BOOLEAN, -- Accord cadre or not. Peraps should rename
     id_accord_cadre VARCHAR(64), -- supposed to be an id but it's a string and sometimes with a sentence in it....
-    
-    
+    sous_traitance_declaree BOOLEAN, -- May be set to true but with no further informations
 
-
-
-    sous_traitance_declaree BOOLEAN,
-    -- HERE
-
-
-    id_modif INT,
-    lieu_exec INT,
-    source VARCHAR(30),
-    forme_prix INT,
-    type INT,
-    montant INT,
-    FOREIGN KEY (type) REFERENCES Type_transaction(id) -- is there for later
+    categorie_par_llm VARCHAR(32) -- This is a new column that will be added after the llm preprocessing
 );
 
 CREATE TABLE IF NOT EXISTS modification (
@@ -129,6 +119,7 @@ CREATE TABLE IF NOT EXISTS modification (
     montant INT,
     date_modification DATE,
     date_notif DATE,
+    existTitulaireModif BOOLEAN, -- if true, then there necessarily exist at least one
 
     -- problem with titulaire_modification, it's a json of titulaire objects but of variable length
 );
@@ -140,3 +131,9 @@ CREATE TABLE IF NOT EXISTS type_transaction (
     -- Define your enum values here, e.g., ENUM('value1', 'value2', 'value3')
 );
 
+CREATE TABLE IF NOT EXISTS titulaire_modif (
+    id_titulaire VARCHAR(20) PRIMARY KEY,
+    denomination_sociale VARCHAR(128),
+    type_identifiant VARCHAR(128),
+    FOREIGN KEY (id_modif) REFERENCES modification(id_modif)
+);
