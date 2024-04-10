@@ -4,15 +4,15 @@ CREATE TABLE IF NOT EXISTS titulaire (
     type_identifiant VARCHAR(128)
 );
 
-CREATE TABLE IF NOT EXISTS procedure (
+CREATE TABLE IF NOT EXISTS procedure_used (
     procedure_id INT PRIMARY KEY,
     procedure_name VARCHAR(128)
 );
 
-CREATE TABLE IF NOT EXISTS nature {
+CREATE TABLE IF NOT EXISTS nature (
     id_nature INT PRIMARY KEY,
     nature VARCHAR(32)
-};
+);
 
 CREATE TABLE IF NOT EXISTS forme_Prix (
     id_forme INT PRIMARY KEY,
@@ -24,10 +24,10 @@ CREATE TABLE IF NOT EXISTS acheteur (
     nom VARCHAR(256)
 );
 
-CREATE TABLE IF NOT EXISTS source {
+CREATE TABLE IF NOT EXISTS source (
     id_source INT PRIMARY KEY,
     source VARCHAR(32)
-};
+);
 
 CREATE TABLE IF NOT EXISTS lieu (
     id_lieu INT PRIMARY KEY,
@@ -57,59 +57,80 @@ CREATE TABLE IF NOT EXISTS considerations_environnementales (
     considerations_env VARCHAR(32) -- could be a tuple, but it seems that we don't have all the possible descriptions possible in the law from the tables
 );
 
-CREATE TABLE IF NOT EXISTS acte_sous_traitance {
+CREATE TABLE IF NOT EXISTS categorie_LLM (
+    id_categorie INT PRIMARY KEY,
+    categorie VARCHAR(32) -- could be a tuple, but it seems that we don't have all the possible descriptions possible in the law from the tables
+);
+
+
+
+CREATE TABLE IF NOT EXISTS transactions (
+    id INT PRIMARY KEY,
+    
+    id_titulaire_1 VARCHAR(20),
+    id_titulaire_2 VARCHAR(20),
+    id_titulaire_3 VARCHAR(20),
+    procedure_id INT,
+    nature INT,
+    codeCPV VARCHAR(20), -- 14 is the max length in the dataset but it's variable...
+    duree_mois INT,
+    montant FLOAT,
+    forme_prix INT,
+    date_notif DATE,
+    objet TEXT,
+    acheteur INT,
+    source INT,
+    lieu_exec INT,
+    date_publication_donnees DATE,
+    date_creation DATE,
+    id_modalite INT,
+    marche_inovant BOOLEAN,
+    ccag VARCHAR(128), -- cahiers des clauses administratives générales
+    offres_recues INT,
+    attribution_avance BOOLEAN,
+    type_groupement_operateurs BOOLEAN, -- boolean because enum isn't supported natively by SQLite. So: true means Conjoint. And false Solidaire.
+    type_prix INT,
+    considerations_sociales INT,
+    considerations_env INT,
+    taux_avance FLOAT,
+    origine_ue FLOAT, -- don't know what it is
+    origine_france FLOAT, -- still
+    update_at DATE, -- don't know what it is
+    id_modif INT,
+    technique BOOLEAN, -- Accord cadre or not. Peraps should rename
+    id_accord_cadre VARCHAR(64), -- supposed to be an id but it's a string and sometimes with a sentence in it....
+    sous_traitance_declaree BOOLEAN, -- May be set to true but with no further informations
+    categorie_par_llm INT, -- This is a new column that will be added after the llm preprocessing
+    FOREIGN KEY (id_titulaire_1) REFERENCES titulaire(id_titulaire),
+    FOREIGN KEY (id_titulaire_2) REFERENCES titulaire(id_titulaire),
+    FOREIGN KEY (id_titulaire_3) REFERENCES titulaire(id_titulaire),
+    FOREIGN KEY (procedure_id) REFERENCES procedure_used(procedure_id),
+    FOREIGN KEY (nature) REFERENCES nature(id_nature),
+    FOREIGN KEY (forme_prix) REFERENCES Forme_Prix(id_forme),
+    FOREIGN KEY (acheteur) REFERENCES acheteur(id_acheteur),
+    FOREIGN KEY (source) REFERENCES source(id_source),
+    FOREIGN KEY (lieu_exec) REFERENCES lieu(id_lieu),
+    FOREIGN KEY (id_modalite) REFERENCES modalite_execution(id_modalite),
+    FOREIGN KEY (type_prix) REFERENCES type_transaction(id_type_prix),
+    FOREIGN KEY (considerations_sociales) REFERENCES considerations_sociales(id_considerations),
+    FOREIGN KEY (considerations_env) REFERENCES considerations_environnementales(id_considerations_env),
+    FOREIGN KEY (id_modif) REFERENCES modification(id_modif),
+    FOREIGN KEY (categorie_par_llm) REFERENCES categorie_LLM(id_categorie)
+);
+
+CREATE TABLE IF NOT EXISTS acte_sous_traitance (
     id_sous_traitant INT PRIMARY KEY,
-    FOREIGN KEY (id_transaction) REFERENCES transactions(id),
     duree_mois INT,
     date_notif DATE,
     date_publication_donnees DATE,
     montant FLOAT,
     variationPrix VARCHAR(15),
     sous_traitant_id VARCHAR(20),
-    sous_traitant_type_id VARCHAR(128)
-};
-
-
-CREATE TABLE IF NOT EXISTS transactions (
-    id INT PRIMARY KEY,
-    -- not null:
-    FOREIGN KEY (id_titulaire_1) REFERENCES titulaire(id_titulaire),
-    FOREIGN KEY (id_titulaire_2) REFERENCES titulaire(id_titulaire),
-    FOREIGN KEY (id_titulaire_3) REFERENCES titulaire(id_titulaire),
-    FOREIGN KEY (procedure_id) REFERENCES procedure(procedure_id),
-    FOREIGN KEY (nature) REFERENCES nature(id_nature),
-    codeCPV VARCHAR(20), -- 14 is the max length in the dataset but it's variable...
-    duree_mois INT,
-    montant FLOAT,
-    FOREIGN KEY (forme_prix) REFERENCES Forme_Prix(id_forme),
-    date_notif DATE,
-    objet TEXT,
-    FOREIGN KEY (acheteur) REFERENCES acheteur(id_acheteur),
-    FOREIGN KEY (source) REFERENCES source(id_source),
-    FOREIGN KEY (lieu_exec) REFERENCES lieu(id_lieu),
-    date_publication_donnees DATE,
-    date_creation DATE,
-    FOREIGN KEY (id_modalite) REFERENCES modalite_execution(id_modalite),
-    marche_inovant BOOLEAN,
-    -- cahiers des clauses administratives générales
-    ccag VARCHAR(128),
-    offres_recues INT,
-    attribution_avance BOOLEAN,
-    type_groupement_operateurs ENUM('Conjoint','Solidaire'),
-    FOREIGN KEY (type_prix) REFERENCES type_transaction(id_type_prix),
-    FOREIGN KEY (considerations_sociales) REFERENCES considerations_sociales(id_considerations),
-    FOREIGN KEY (considerations_env) REFERENCES considerations_environnementales(id_considerations_env),
-    taux_avance FLOAT,
-    origine_ue FLOAT, -- don't know what it is
-    origine_france FLOAT, -- still
-    update_at DATE, -- don't know what it is
-    FOREIGN KEY (id_modif) REFERENCES modification(id_modif),
-    technique BOOLEAN, -- Accord cadre or not. Peraps should rename
-    id_accord_cadre VARCHAR(64), -- supposed to be an id but it's a string and sometimes with a sentence in it....
-    sous_traitance_declaree BOOLEAN, -- May be set to true but with no further informations
-
-    categorie_par_llm VARCHAR(32) -- This is a new column that will be added after the llm preprocessing
+    sous_traitant_type_id VARCHAR(128),
+    id_transaction INT,
+    FOREIGN KEY (id_transaction) REFERENCES transactions(id)
 );
+
 
 CREATE TABLE IF NOT EXISTS modification (
     id_modif INT PRIMARY KEY,
@@ -119,9 +140,8 @@ CREATE TABLE IF NOT EXISTS modification (
     montant INT,
     date_modification DATE,
     date_notif DATE,
-    existTitulaireModif BOOLEAN, -- if true, then there necessarily exist at least one
-
-    -- problem with titulaire_modification, it's a json of titulaire objects but of variable length
+    existTitulaireModif BOOLEAN -- if true, then there necessarily exist at least one
+    -- problem with titulaire_modification, it's a json of titulaire objects but of variable length -- solved
 );
 
 
@@ -135,5 +155,6 @@ CREATE TABLE IF NOT EXISTS titulaire_modif (
     id_titulaire VARCHAR(20) PRIMARY KEY,
     denomination_sociale VARCHAR(128),
     type_identifiant VARCHAR(128),
+    id_modif INT,
     FOREIGN KEY (id_modif) REFERENCES modification(id_modif)
 );
